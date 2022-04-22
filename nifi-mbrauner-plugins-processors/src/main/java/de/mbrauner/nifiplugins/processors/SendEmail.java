@@ -1,27 +1,21 @@
 package de.mbrauner.nifiplugins.processors;
 
-import com.sun.mail.util.ASCIIUtility;
-import jakarta.mail.Header;
 import jakarta.mail.Message;
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeUtility;
-import org.apache.nifi.annotation.behavior.DynamicProperties;
 import org.apache.nifi.annotation.behavior.DynamicProperty;
 import org.apache.nifi.annotation.behavior.DynamicRelationship;
 import org.apache.nifi.components.PropertyDescriptor;
 import org.apache.nifi.expression.ExpressionLanguageScope;
 import org.apache.nifi.processor.ProcessContext;
 import org.apache.nifi.processor.ProcessSession;
-import org.apache.nifi.processor.ProcessorInitializationContext;
 import org.apache.nifi.processor.util.StandardValidators;
-import org.apache.nifi.processors.standard.*;
+import org.apache.nifi.processors.standard.PutEmail;
 
 import java.io.UnsupportedEncodingException;
-import java.text.Normalizer;
-import java.util.*;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.regex.Pattern;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 @DynamicProperty(name = "Relationship Name", value = "A Regular Expression", expressionLanguageScope = ExpressionLanguageScope.FLOWFILE_ATTRIBUTES,
     description = "Routes FlowFiles whose content matches the regular expression defined by Dynamic Property's value to the "
