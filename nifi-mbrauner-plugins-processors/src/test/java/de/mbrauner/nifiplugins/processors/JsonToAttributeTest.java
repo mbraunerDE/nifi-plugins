@@ -28,13 +28,13 @@ import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class JsonToAttributeProcessorTest {
+public class JsonToAttributeTest {
 
     private TestRunner testRunner;
 
     @Before
     public void init() {
-        testRunner = TestRunners.newTestRunner(JsonToAttributeProcessor.class);
+        testRunner = TestRunners.newTestRunner(JsonToAttribute.class);
     }
 
     @Test
@@ -43,9 +43,9 @@ public class JsonToAttributeProcessorTest {
         ff.setData("{'key':'value','maike':'will lead','object':{'sub':'type'}}".getBytes(StandardCharsets.UTF_8));
         testRunner.enqueue(ff);
         testRunner.run(1);
-        testRunner.assertTransferCount(JsonToAttributeProcessor.SUCCESS, 1);
-        testRunner.assertAllFlowFilesTransferred(JsonToAttributeProcessor.SUCCESS);
-        FlowFile ffReturn = testRunner.getFlowFilesForRelationship(JsonToAttributeProcessor.SUCCESS).get(0);
+        testRunner.assertTransferCount(JsonToAttribute.SUCCESS, 1);
+        testRunner.assertAllFlowFilesTransferred(JsonToAttribute.SUCCESS);
+        FlowFile ffReturn = testRunner.getFlowFilesForRelationship(JsonToAttribute.SUCCESS).get(0);
         Map<String, String> map = ffReturn.getAttributes();
         assertThat(map).containsEntry("key", "value").containsEntry("maike", "will lead").containsEntry("object", "{\"sub\":\"type\"}");
     }
@@ -56,9 +56,9 @@ public class JsonToAttributeProcessorTest {
         ff.setData("[{'key':'value','maike':'will lead','object':{'sub':'type'}}]".getBytes(StandardCharsets.UTF_8));
         testRunner.enqueue(ff);
         testRunner.run(1);
-        testRunner.assertTransferCount(JsonToAttributeProcessor.FAILURE, 1);
-        testRunner.assertAllFlowFilesTransferred(JsonToAttributeProcessor.FAILURE);
-        FlowFile ffReturn = testRunner.getFlowFilesForRelationship(JsonToAttributeProcessor.FAILURE).get(0);
+        testRunner.assertTransferCount(JsonToAttribute.FAILURE, 1);
+        testRunner.assertAllFlowFilesTransferred(JsonToAttribute.FAILURE);
+        FlowFile ffReturn = testRunner.getFlowFilesForRelationship(JsonToAttribute.FAILURE).get(0);
         assertThat(ffReturn).isNotNull();
     }
 
@@ -68,9 +68,9 @@ public class JsonToAttributeProcessorTest {
         ff.setData("[{'key':'value','maike':'will lead','object':{'sub':'type'}}]".getBytes(StandardCharsets.UTF_8));
         testRunner.enqueue(ff);
         testRunner.run(1);
-        testRunner.assertTransferCount(JsonToAttributeProcessor.FAILURE, 1);
-        testRunner.assertAllFlowFilesTransferred(JsonToAttributeProcessor.FAILURE);
-        FlowFile ffReturn = testRunner.getFlowFilesForRelationship(JsonToAttributeProcessor.FAILURE).get(0);
+        testRunner.assertTransferCount(JsonToAttribute.FAILURE, 1);
+        testRunner.assertAllFlowFilesTransferred(JsonToAttribute.FAILURE);
+        FlowFile ffReturn = testRunner.getFlowFilesForRelationship(JsonToAttribute.FAILURE).get(0);
         assertThat(ffReturn).isNotNull();
     }
 

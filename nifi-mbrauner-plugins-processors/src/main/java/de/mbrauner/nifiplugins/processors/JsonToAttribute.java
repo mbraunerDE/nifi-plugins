@@ -18,7 +18,7 @@ import java.util.*;
 @Tags({ "json", "attribute" })
 @CapabilityDescription("Transfer all plain json values to attribute values, content is not modified")
 @InputRequirement(InputRequirement.Requirement.INPUT_REQUIRED)
-public class JsonToAttributeProcessor extends AbstractProcessor {
+public class JsonToAttribute extends AbstractProcessor {
 
     public static final Relationship SUCCESS = new Relationship.Builder()
         .name("success")
