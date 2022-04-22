@@ -38,20 +38,15 @@
             <version>1.15.3</version>
         </dependency>
 
-       <!-- <dependency>
-            <groupId>org.apache.nifi</groupId>
-            <artifactId>nifi-standard-processors</artifactId>
-            <version>1.15.3</version>
-        </dependency>-->
         <!-- Libs to get org.apache.nifi.processors.standard.PutEmail working, and not have to import ALL  standard processors-->
         <dependency>
-            <groupId>jakarta.activation</groupId>
-            <artifactId>jakarta.activation-api</artifactId>
+            <groupId>com.sun.activation</groupId>
+            <artifactId>jakarta.activation</artifactId>
             <version>2.0.1</version>
         </dependency>
         <dependency>
-            <groupId>jakarta.mail</groupId>
-            <artifactId>jakarta.mail-api</artifactId>
+            <groupId>com.sun.mail</groupId>
+            <artifactId>jakarta.mail</artifactId>
             <version>2.0.1</version>
         </dependency>
         <dependency>
@@ -66,7 +61,7 @@
             <artifactId>gson</artifactId>
             <version>2.9.0</version>
         </dependency>
-
+        
         <!-- basics -->
         <dependency>
             <groupId>org.apache.nifi</groupId>
