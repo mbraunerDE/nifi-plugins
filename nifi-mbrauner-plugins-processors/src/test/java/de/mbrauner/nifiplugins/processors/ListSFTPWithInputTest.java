@@ -121,6 +121,38 @@ public class ListSFTPWithInputTest {
     }
 
     @Test
+    public void testProcessorWithInputHostnameMissingFile() {
+        testRunner.setProperty(ListSFTPWithInput.SFTP_HOSTNAME, "${sftp.remote.host}");
+        testRunner.setProperty(ListSFTPWithInput.SFTP_FILE_FILTER, ".*\\.dat");
+
+        MockFlowFile ff = new MockFlowFile(789);
+        ff.putAttributes(Collections.singletonMap("sftp.remote.host", "127.0.0.1"));
+        testRunner.enqueue(ff);
+        testRunner.run(1);
+        testRunner.assertTransferCount(ListSFTPWithInput.NO_FILE, 1);
+        testRunner.assertAllFlowFilesTransferred(ListSFTPWithInput.NO_FILE);
+        FlowFile ffReturn = testRunner.getFlowFilesForRelationship(ListSFTPWithInput.NO_FILE).get(0);
+        Map<String, String> map = ffReturn.getAttributes();
+        assertThat(map)
+            .containsEntry("sftp.remote.host", "127.0.0.1")
+            .containsEntry("sftp.remote.port", "12345")
+            .containsEntry("sftp.remote.user", "nutzer")
+            .containsKey("filename")//added by default
+            .containsKey("path")//added by default
+            .doesNotContainKey("directory");
+        assertThat(testRunner.getProvenanceEvents()
+            .stream().map(ProvenanceEventRecord::getEventType).distinct()).containsOnly(ProvenanceEventType.DROP, ProvenanceEventType.FORK);
+        assertThat(testRunner.getProvenanceEvents()
+            .stream()
+            .filter(provenanceEventRecord -> provenanceEventRecord.getEventType() == ProvenanceEventType.FORK)
+            .count()).isEqualTo(1);
+        assertThat(testRunner.getProvenanceEvents()
+            .stream()
+            .filter(provenanceEventRecord -> provenanceEventRecord.getEventType() == ProvenanceEventType.DROP)
+            .count()).isEqualTo(1);
+    }
+
+    @Test
     public void testProcessorWithInputHostnameFailure() {
         testRunner.setProperty(ListSFTPWithInput.SFTP_HOSTNAME, "host");
 

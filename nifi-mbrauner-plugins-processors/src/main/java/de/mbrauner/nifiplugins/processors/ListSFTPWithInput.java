@@ -1,5 +1,6 @@
 package de.mbrauner.nifiplugins.processors;
 
+import net.schmizz.sshj.sftp.RemoteResourceFilter;
 import net.schmizz.sshj.sftp.RemoteResourceInfo;
 import net.schmizz.sshj.transport.verification.HostKeyVerifier;
 import org.apache.nifi.annotation.behavior.*;
@@ -22,8 +23,8 @@ import net.schmizz.sshj.sftp.SFTPClient;
 import javax.swing.text.html.Option;
 import java.security.PublicKey;
 import java.util.*;
+import java.util.regex.Pattern;
 
-@PrimaryNodeOnly
 @TriggerSerially
 @InputRequirement(InputRequirement.Requirement.INPUT_REQUIRED)
 @Tags({ "list", "sftp", "remote", "ingest", "source", "input", "files" })
@@ -48,6 +49,10 @@ public class ListSFTPWithInput extends AbstractProcessor implements VerifiablePr
     public static final Relationship SUCCESS = new Relationship.Builder()
         .name("success")
         .description("Output relation for flow files")
+        .build();
+    public static final Relationship NO_FILE = new Relationship.Builder()
+        .name("nofile")
+        .description("Output relation for flow files where nothing is found on host")
         .build();
     public static final Relationship FAILURE = new Relationship.Builder()
         .name("failure")
@@ -124,6 +129,7 @@ public class ListSFTPWithInput extends AbstractProcessor implements VerifiablePr
     protected void init(final ProcessorInitializationContext context) {
         relationships = new HashSet<>();
         relationships.add(SUCCESS);
+        relationships.add(NO_FILE);
         relationships.add(FAILURE);
         relationships = Collections.unmodifiableSet(relationships);
 
@@ -173,6 +179,7 @@ public class ListSFTPWithInput extends AbstractProcessor implements VerifiablePr
         String password = getProperty(context, SFTP_PASSWORD, ff);
         int port = Integer.parseInt(getProperty(context, SFTP_PORT, ff));
         boolean hostKeyCheck = "true".equals(getProperty(context, STRICT_HOST_KEY_CHECKING, ff));
+        final Pattern pattern = Pattern.compile(getProperty(context, SFTP_FILE_FILTER, ff));
 
         final SSHClient ssh = new SSHClient();
         try {
@@ -193,19 +200,29 @@ public class ListSFTPWithInput extends AbstractProcessor implements VerifiablePr
                 ssh.authPassword(username, password);
                 final SFTPClient sftp = ssh.newSFTPClient();
                 try {
-                    List<RemoteResourceInfo> l = sftp.ls(path);
-                    for (RemoteResourceInfo r : l) {
-                        if (r.isRegularFile()) {
-                            FlowFile output = session.create(ff);
-                            Map<String, String> attributes = new HashMap<>();
-                            attributes.put("sftp.remote.host", hostname);
-                            attributes.put("sftp.remote.port", Integer.toString(port));
-                            attributes.put("sftp.remote.user", username);
-                            attributes.put("filename", r.getName());
-                            attributes.put("path", r.getPath());
-                            attributes.put("directory", r.getPath().replace(r.getName(), ""));
-                            output = session.putAllAttributes(output, attributes);
-                            session.transfer(output, SUCCESS);
+                    List<RemoteResourceInfo> l = sftp.ls(path, resource -> pattern.matcher(resource.getName()).matches());
+                    if (l.isEmpty()) {
+                        FlowFile output = session.create(ff);
+                        Map<String, String> attributes = new HashMap<>();
+                        attributes.put("sftp.remote.host", hostname);
+                        attributes.put("sftp.remote.port", Integer.toString(port));
+                        attributes.put("sftp.remote.user", username);
+                        output = session.putAllAttributes(output, attributes);
+                        session.transfer(output, NO_FILE);
+                    } else {
+                        for (RemoteResourceInfo r : l) {
+                            if (r.isRegularFile()) {
+                                FlowFile output = session.create(ff);
+                                Map<String, String> attributes = new HashMap<>();
+                                attributes.put("sftp.remote.host", hostname);
+                                attributes.put("sftp.remote.port", Integer.toString(port));
+                                attributes.put("sftp.remote.user", username);
+                                attributes.put("filename", r.getName());
+                                attributes.put("path", r.getPath());
+                                attributes.put("directory", r.getPath().replace(r.getName(), ""));
+                                output = session.putAllAttributes(output, attributes);
+                                session.transfer(output, SUCCESS);
+                            }
                         }
                     }
                 } finally {
