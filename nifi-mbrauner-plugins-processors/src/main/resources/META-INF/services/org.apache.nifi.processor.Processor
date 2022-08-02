@@ -14,4 +14,5 @@
 # limitations under the License.
 de.mbrauner.nifiplugins.processors.JsonToAttribute
 de.mbrauner.nifiplugins.processors.SendEmail
+de.mbrauner.nifiplugins.processors.ListSFTPWithInput
 teams.processors.nifi_notify_teams.PutTeamsWithInput

@@ -1,27 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<configuration>
-  <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
-    <encoder>
-      <charset>UTF-8</charset>
-      <pattern>%d %-5level [%thread] %logger:%line %msg%n</pattern>
-    </encoder>
-  </appender>
-  
-  <logger name="com.acardo.accounting.helper.scp.JSCHLogger" level="WARN"/>
-  <logger name="com.acardo" level="DEBUG"/>
-  <logger name="com.acardo.commonstest" level="WARN" />
-  
-  <logger name="org.sql2o.Query" level="DEBUG" additivity="false">
-    <appender-ref ref="SQL2O_STDOUT" />
-    <appender-ref ref="SQL2O_FILE" />
-  </logger>
-  <logger name="com.acardo.accounting.jobs.listeners" level="DEBUG" additivity="true">
-    <appender-ref ref="STEPS_STDOUT" />
-    <appender-ref ref="STEPS_FILE" />
-  </logger>
-  
-  <root level="INFO">
-    <appender-ref ref="STDOUT" />
-    <appender-ref ref="FILE" />
-  </root>
+<configuration debug="true">
+    <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <charset>UTF-8</charset>
+            <pattern>%d %-5level [%thread] %logger:%line %msg%n</pattern>
+        </encoder>
+    </appender>
+
+    <logger name="de.mbrauner" level="DEBUG">
+        <appender-ref ref="STDOUT"/>
+    </logger>
+
+    <root level="INFO">
+        <appender-ref ref="STDOUT"/>
+    </root>
 </configuration>
