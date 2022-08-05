@@ -15,6 +15,7 @@ import org.apache.nifi.processor.exception.ProcessException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Tags({ "json", "attribute" })
 @CapabilityDescription("Transfer all flat json values to text")
@@ -61,7 +62,10 @@ public class FlatJsonToText extends AbstractProcessor {
                     JsonObject jo = je.getAsJsonObject();
                     FlowFile flowFile2 = session.create(flowFile1);
                     StringBuilder content = new StringBuilder();
-                    for (Map.Entry<String, JsonElement> e : jo.entrySet()) {
+                    for (Map.Entry<String, JsonElement> e : jo.entrySet()
+                        .stream()
+                        .sorted(Map.Entry.comparingByKey())
+                        .collect(Collectors.toList())) {
                         if (e.getValue().isJsonPrimitive()) {
                             content.append(e.getKey()).append(":\t").append(e.getValue().getAsString()).append("\n");
                         } else {

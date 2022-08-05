@@ -24,7 +24,7 @@ public class FlatJsonToTextTest {
     @Test
     public void testProcessor() {
         MockFlowFile ff = new MockFlowFile(1);
-        ff.setData("{'key':'value','maike':'will lead','object':{'sub':'type'}}".getBytes(StandardCharsets.UTF_8));
+        ff.setData("{'maike':'will lead','key':'value','object':{'sub':'type'}}".getBytes(StandardCharsets.UTF_8));
         testRunner.enqueue(ff);
         testRunner.run(1);
         testRunner.assertTransferCount(JsonToAttribute.SUCCESS, 1);
