@@ -29,9 +29,7 @@ import org.junit.Rule;
 import org.junit.Test;
 
 import java.io.IOException;
-import java.nio.charset.StandardCharsets;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.Map;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
@@ -71,22 +69,22 @@ public class ListSFTPWithInputTest {
         Map<String, String> map = ffReturn.getAttributes();
         assertThat(map).isNotNull().isNotEmpty();
         assertThat(map)
-            .containsEntry("sftp.remote.host", "127.0.0.1")
-            .containsEntry("sftp.remote.port", "12345")
-            .containsEntry("sftp.remote.user", "nutzer")
-            .containsEntry("filename", "file.txt")
-            .containsEntry("path", "/directory/file.txt")
-            .containsEntry("directory", "/directory/");
+                .containsEntry("sftp.remote.host", "127.0.0.1")
+                .containsEntry("sftp.remote.port", "12345")
+                .containsEntry("sftp.remote.user", "nutzer")
+                .containsEntry("filename", "file.txt")
+                .containsEntry("path", "/directory/file.txt")
+                .containsEntry("directory", "/directory/");
         assertThat(testRunner.getProvenanceEvents()
-            .stream().map(ProvenanceEventRecord::getEventType).distinct()).containsOnly(ProvenanceEventType.CREATE, ProvenanceEventType.FORK);
+                .stream().map(ProvenanceEventRecord::getEventType).distinct()).containsOnly(ProvenanceEventType.CREATE, ProvenanceEventType.FORK);
         assertThat(testRunner.getProvenanceEvents()
-            .stream()
-            .filter(provenanceEventRecord -> provenanceEventRecord.getEventType() == ProvenanceEventType.FORK)
-            .count()).isEqualTo(1);
+                .stream()
+                .filter(provenanceEventRecord -> provenanceEventRecord.getEventType() == ProvenanceEventType.FORK)
+                .count()).isEqualTo(1);
         assertThat(testRunner.getProvenanceEvents()
-            .stream()
-            .filter(provenanceEventRecord -> provenanceEventRecord.getEventType() == ProvenanceEventType.CREATE)
-            .count()).isEqualTo(1);
+                .stream()
+                .filter(provenanceEventRecord -> provenanceEventRecord.getEventType() == ProvenanceEventType.CREATE)
+                .count()).isEqualTo(1);
     }
 
     @Test
@@ -102,22 +100,22 @@ public class ListSFTPWithInputTest {
         FlowFile ffReturn = testRunner.getFlowFilesForRelationship(ListSFTPWithInput.SUCCESS).get(0);
         Map<String, String> map = ffReturn.getAttributes();
         assertThat(map)
-            .containsEntry("sftp.remote.host", "127.0.0.1")
-            .containsEntry("sftp.remote.port", "12345")
-            .containsEntry("sftp.remote.user", "nutzer")
-            .containsEntry("filename", "file.txt")
-            .containsEntry("path", "/directory/file.txt")
-            .containsEntry("directory", "/directory/");
+                .containsEntry("sftp.remote.host", "127.0.0.1")
+                .containsEntry("sftp.remote.port", "12345")
+                .containsEntry("sftp.remote.user", "nutzer")
+                .containsEntry("filename", "file.txt")
+                .containsEntry("path", "/directory/file.txt")
+                .containsEntry("directory", "/directory/");
         assertThat(testRunner.getProvenanceEvents()
-            .stream().map(ProvenanceEventRecord::getEventType).distinct()).containsOnly(ProvenanceEventType.DROP, ProvenanceEventType.FORK);
+                .stream().map(ProvenanceEventRecord::getEventType).distinct()).containsOnly(ProvenanceEventType.DROP, ProvenanceEventType.FORK);
         assertThat(testRunner.getProvenanceEvents()
-            .stream()
-            .filter(provenanceEventRecord -> provenanceEventRecord.getEventType() == ProvenanceEventType.FORK)
-            .count()).isEqualTo(1);
+                .stream()
+                .filter(provenanceEventRecord -> provenanceEventRecord.getEventType() == ProvenanceEventType.FORK)
+                .count()).isEqualTo(1);
         assertThat(testRunner.getProvenanceEvents()
-            .stream()
-            .filter(provenanceEventRecord -> provenanceEventRecord.getEventType() == ProvenanceEventType.DROP)
-            .count()).isEqualTo(1);
+                .stream()
+                .filter(provenanceEventRecord -> provenanceEventRecord.getEventType() == ProvenanceEventType.DROP)
+                .count()).isEqualTo(1);
     }
 
     @Test
@@ -134,22 +132,22 @@ public class ListSFTPWithInputTest {
         FlowFile ffReturn = testRunner.getFlowFilesForRelationship(ListSFTPWithInput.NO_FILE).get(0);
         Map<String, String> map = ffReturn.getAttributes();
         assertThat(map)
-            .containsEntry("sftp.remote.host", "127.0.0.1")
-            .containsEntry("sftp.remote.port", "12345")
-            .containsEntry("sftp.remote.user", "nutzer")
-            .containsKey("filename")//added by default
-            .containsKey("path")//added by default
-            .doesNotContainKey("directory");
+                .containsEntry("sftp.remote.host", "127.0.0.1")
+                .containsEntry("sftp.remote.port", "12345")
+                .containsEntry("sftp.remote.user", "nutzer")
+                .containsKey("filename")//added by default
+                .containsKey("path")//added by default
+                .doesNotContainKey("directory");
         assertThat(testRunner.getProvenanceEvents()
-            .stream().map(ProvenanceEventRecord::getEventType).distinct()).containsOnly(ProvenanceEventType.DROP, ProvenanceEventType.FORK);
+                .stream().map(ProvenanceEventRecord::getEventType).distinct()).containsOnly(ProvenanceEventType.DROP, ProvenanceEventType.FORK);
         assertThat(testRunner.getProvenanceEvents()
-            .stream()
-            .filter(provenanceEventRecord -> provenanceEventRecord.getEventType() == ProvenanceEventType.FORK)
-            .count()).isEqualTo(1);
+                .stream()
+                .filter(provenanceEventRecord -> provenanceEventRecord.getEventType() == ProvenanceEventType.FORK)
+                .count()).isEqualTo(1);
         assertThat(testRunner.getProvenanceEvents()
-            .stream()
-            .filter(provenanceEventRecord -> provenanceEventRecord.getEventType() == ProvenanceEventType.DROP)
-            .count()).isEqualTo(1);
+                .stream()
+                .filter(provenanceEventRecord -> provenanceEventRecord.getEventType() == ProvenanceEventType.DROP)
+                .count()).isEqualTo(1);
     }
 
     @Test
@@ -163,5 +161,12 @@ public class ListSFTPWithInputTest {
         testRunner.assertTransferCount(ListSFTPWithInput.FAILURE, 1);
         testRunner.assertAllFlowFilesTransferred(ListSFTPWithInput.FAILURE);
         testRunner.assertPenalizeCount(1);
+        FlowFile ffReturn = testRunner.getFlowFilesForRelationship(ListSFTPWithInput.FAILURE).get(0);
+        assertThat(ffReturn.getAttributes())
+                .containsEntry("sftp.remote.host", "127.0.0.1")
+                .containsEntry("ExceptionReport", "java.net.UnknownHostException: host")
+                .containsKey("filename")//added by default
+                .containsKey("path")//added by default
+        ;
     }
 }
