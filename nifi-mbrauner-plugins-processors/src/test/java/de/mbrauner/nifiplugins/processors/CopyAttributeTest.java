@@ -38,6 +38,7 @@ public class CopyAttributeTest {
         testRunner.assertAllFlowFilesTransferred(JsonToAttribute.SUCCESS);
         MockFlowFile ffReturn = testRunner.getFlowFilesForRelationship(JsonToAttribute.SUCCESS).get(0);
         assertThat(ffReturn.getAttributes()).containsEntry("sftp.remote.host", "richtig").containsEntry("ip", "richtig");
+        assertThat(ff.getContent()).isEqualTo(new String(ff.getData(), StandardCharsets.UTF_8));
     }
 
     @Test
@@ -58,5 +59,6 @@ public class CopyAttributeTest {
         testRunner.assertAllFlowFilesTransferred(JsonToAttribute.SUCCESS);
         MockFlowFile ffReturn = testRunner.getFlowFilesForRelationship(JsonToAttribute.SUCCESS).get(0);
         assertThat(ffReturn.getAttributes()).containsEntry("sftp.remote.host", "Dies ist ein Test richtig mit mehreren Ersetzungen richtig2").containsEntry("ip", "richtig").containsEntry("ip2", "richtig2");
+        assertThat(ff.getContent()).isEqualTo(new String(ff.getData(), StandardCharsets.UTF_8));
     }
 }

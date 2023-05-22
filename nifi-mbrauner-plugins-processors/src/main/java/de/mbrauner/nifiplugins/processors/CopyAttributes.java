@@ -61,7 +61,7 @@ public class CopyAttributes extends AbstractProcessor {
                     String oldValue = map.put(e.getKey().getName(), newValue);
                     getLogger().debug("change from {} to {}", oldValue, newValue);
                 }
-                FlowFile output = session.create(input);
+                FlowFile output = session.clone(input);
                 output = session.putAllAttributes(output, map);
                 session.transfer(output, SUCCESS);
             } catch (Exception e) {
