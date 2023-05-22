@@ -20,7 +20,7 @@
     <parent>
         <groupId>de.mbrauner</groupId>
         <artifactId>nifiplugins</artifactId>
-        <version>1.0</version>
+        <version>1.1</version>
     </parent>
 
     <artifactId>nifi-mbrauner-plugins-processors</artifactId>
@@ -55,6 +55,19 @@
             <version>1.14</version>
         </dependency>
 
+        <!-- Libs to get org.apache.nifi.processors.standard.PutSFTP working , and not have to import ALL  standard processors-->
+        <dependency>
+            <groupId>commons-net</groupId>
+            <artifactId>commons-net</artifactId>
+            <version>3.9.0</version>
+        </dependency>
+        <dependency>
+            <groupId>com.exceptionfactory.socketbroker</groupId>
+            <artifactId>socketbroker</artifactId>
+            <version>1.0.2</version>
+        </dependency>
+
+
         <!-- JsonToAttributeProcessor -->
         <dependency>
             <groupId>com.google.code.gson</groupId>
@@ -84,7 +97,7 @@
         <dependency>
             <groupId>com.hierynomus</groupId>
             <artifactId>sshj</artifactId>
-            <version>0.32.0</version>
+            <version>0.33.0</version>
         </dependency>
 
         <!-- basics -->

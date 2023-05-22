@@ -16,4 +16,5 @@ de.mbrauner.nifiplugins.processors.JsonToAttribute
 de.mbrauner.nifiplugins.processors.FlatJsonToText
 de.mbrauner.nifiplugins.processors.SendEmail
 de.mbrauner.nifiplugins.processors.ListSFTPWithInput
+de.mbrauner.nifiplugins.processors.PutSFTPWithErrorMessage
 teams.processors.nifi_notify_teams.PutTeamsWithInput
