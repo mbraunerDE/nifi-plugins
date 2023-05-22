@@ -199,7 +199,10 @@ public class ListSFTPWithInput extends AbstractProcessor implements VerifiablePr
                 ssh.authPassword(username, password);
                 final SFTPClient sftp = ssh.newSFTPClient();
                 try {
-                    List<RemoteResourceInfo> l = sftp.ls(path, resource -> pattern.matcher(resource.getName()).matches());
+                    List<RemoteResourceInfo> l = sftp.ls(path, resource -> {
+                        getLogger().debug("check {} against {} will return {}", resource.getName(), pattern.pattern(), pattern.matcher(resource.getName()).matches());
+                        return pattern.matcher(resource.getName()).matches();
+                    });
                     if (l.isEmpty()) {
                         FlowFile output = session.create(ff);
                         Map<String, String> attributes = new HashMap<>();
@@ -234,7 +237,7 @@ public class ListSFTPWithInput extends AbstractProcessor implements VerifiablePr
         } catch (Throwable t) {
             getLogger().error(t.getMessage(), t);
             Map<String, String> attributes = new HashMap<>(ff.getAttributes());
-            attributes.put("ExceptionReport", t.getClass().getCanonicalName()+": "+t.getMessage());
+            attributes.put("ExceptionReport", t.getClass().getCanonicalName() + ": " + t.getMessage());
             session.transfer(session.putAllAttributes(session.penalize(ff), attributes), FAILURE);
         }
     }

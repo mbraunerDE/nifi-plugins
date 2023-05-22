@@ -88,6 +88,45 @@ public class ListSFTPWithInputTest {
     }
 
     @Test
+    public void testProcessorWithInputHostnameAndRegexReplacement() throws IOException {
+        sftpServer.putFile("/directory/abc12345_12345678_de.txt", "content of file", UTF_8);
+        sftpServer.putFile("/directory/127.0.0.1_abc12345_12345678_de.txt", "content of file", UTF_8);
+        testRunner.setProperty(ListSFTPWithInput.SFTP_HOSTNAME, "${sftp.remote.host}");
+
+        MockFlowFile ff = new MockFlowFile(456);
+        ff.putAttributes(Collections.singletonMap("sftp.remote.host", "127.0.0.1"));
+        testRunner.setProperty(ListSFTPWithInput.SFTP_FILE_FILTER, "(${sftp.remote.host:replaceAll('\\.', '\\\\\\.')}_abc.*_de\\.txt)|(abc.*_de\\.txt)");
+        testRunner.enqueue(ff);
+        testRunner.run(1);
+        testRunner.assertTransferCount(ListSFTPWithInput.SUCCESS, 2);
+        testRunner.assertAllFlowFilesTransferred(ListSFTPWithInput.SUCCESS);
+        assertThat(testRunner.getFlowFilesForRelationship(ListSFTPWithInput.SUCCESS).get(0).getAttributes())
+                .containsEntry("sftp.remote.host", "127.0.0.1")
+                .containsEntry("sftp.remote.port", "12345")
+                .containsEntry("sftp.remote.user", "nutzer")
+                .containsEntry("filename", "127.0.0.1_abc12345_12345678_de.txt")
+                .containsEntry("path", "/directory/127.0.0.1_abc12345_12345678_de.txt")
+                .containsEntry("directory", "/directory/");
+        assertThat(testRunner.getFlowFilesForRelationship(ListSFTPWithInput.SUCCESS).get(1).getAttributes())
+                .containsEntry("sftp.remote.host", "127.0.0.1")
+                .containsEntry("sftp.remote.port", "12345")
+                .containsEntry("sftp.remote.user", "nutzer")
+                .containsEntry("filename", "abc12345_12345678_de.txt")
+                .containsEntry("path", "/directory/abc12345_12345678_de.txt")
+                .containsEntry("directory", "/directory/");
+        assertThat(testRunner.getProvenanceEvents()
+                .stream().map(ProvenanceEventRecord::getEventType).distinct()).containsOnly(ProvenanceEventType.DROP, ProvenanceEventType.FORK);
+        assertThat(testRunner.getProvenanceEvents()
+                .stream()
+                .filter(provenanceEventRecord -> provenanceEventRecord.getEventType() == ProvenanceEventType.FORK)
+                .count()).isEqualTo(2);//2 flowfile gets out
+        assertThat(testRunner.getProvenanceEvents()
+                .stream()
+                .filter(provenanceEventRecord -> provenanceEventRecord.getEventType() == ProvenanceEventType.DROP)
+                .count()).isEqualTo(1); //1 flowfile comes in and has to be dropped
+    }
+
+    @Test
     public void testProcessorWithInputHostname() {
         testRunner.setProperty(ListSFTPWithInput.SFTP_HOSTNAME, "${sftp.remote.host}");
 
