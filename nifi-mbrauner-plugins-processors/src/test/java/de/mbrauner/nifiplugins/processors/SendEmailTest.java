@@ -6,6 +6,8 @@ import groovy.util.logging.Slf4j;
 import jakarta.mail.Header;
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
+import org.apache.nifi.components.PropertyDescriptor;
+import org.apache.nifi.expression.ExpressionLanguageScope;
 import org.apache.nifi.flowfile.FlowFile;
 import org.apache.nifi.util.MockFlowFile;
 import org.apache.nifi.util.TestRunner;
@@ -41,12 +43,14 @@ public class SendEmailTest {
         greenMail.start();
 
         testRunner = TestRunners.newTestRunner(SendEmail.class);
+        testRunner.clearProperties();
         testRunner.setProperty(SendEmail.SMTP_HOSTNAME, greenMail.getSmtp().getBindTo());
         testRunner.setProperty(SendEmail.SMTP_PORT, Integer.toString(greenMail.getSmtp().getPort()));
         testRunner.setProperty(SendEmail.SMTP_USERNAME, "send@test.test");
         testRunner.setProperty(SendEmail.SMTP_PASSWORD, "send");
         testRunner.setProperty(SendEmail.FROM, "send@test.test");
         testRunner.setProperty(SendEmail.TO, "receive@test.test");
+        testRunner.setValidateExpressionUsage(false);
 
         MockFlowFile ff = new MockFlowFile(1);
         ff.setData("content content content".getBytes(StandardCharsets.UTF_8));
@@ -60,8 +64,12 @@ public class SendEmailTest {
         assertThat(mail.getHeader("gibt es nicht")).isNull();
     }
 
+    private PropertyDescriptor propertyDescriptor(String name){
+        return new PropertyDescriptor.Builder().name(name).expressionLanguageSupported(ExpressionLanguageScope.VARIABLE_REGISTRY).dynamic(true).build();
+    }
+
     @Test public void checkEmpty() throws MessagingException {
-        testRunner.setProperty("emptyProperty", "");
+        testRunner.setProperty(propertyDescriptor("emptyProperty") ,"");
         run();
         MimeMessage mail = getMail();
         assertThat(mail.getHeader("X-Mailer")).containsOnly("NiFi");
@@ -70,7 +78,7 @@ public class SendEmailTest {
     }
 
     @Test public void checkSingle() throws MessagingException {
-        testRunner.setProperty("schlüssel", "wert");
+        testRunner.setProperty(propertyDescriptor("schlüssel") ,"wert");
         run();
         MimeMessage mail = getMail();
         Enumeration<Header> e = mail.getAllHeaders();
@@ -84,8 +92,8 @@ public class SendEmailTest {
     }
 
     @Test public void checkMulti() throws MessagingException {
-        testRunner.setProperty("schlüssel", "wert");
-        testRunner.setProperty("key", "value");
+        testRunner.setProperty(propertyDescriptor("schlüssel") ,"wert");
+        testRunner.setProperty(propertyDescriptor("key") ,"value");
         run();
         MimeMessage mail = getMail();
         assertThat(mail.getHeader("X-Mailer")).containsOnly("NiFi");
