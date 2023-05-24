@@ -20,7 +20,7 @@
     <parent>
         <groupId>de.mbrauner</groupId>
         <artifactId>nifiplugins</artifactId>
-        <version>1.1</version>
+        <version>1.2</version>
     </parent>
 
     <artifactId>nifi-mbrauner-plugins-processors</artifactId>
@@ -32,11 +32,6 @@
             <groupId>org.apache.nifi</groupId>
             <artifactId>nifi-api</artifactId>
         </dependency>
-<!--        <dependency>-->
-<!--            <groupId>org.apache.nifi</groupId>-->
-<!--            <artifactId>nifi-utils</artifactId>-->
-<!--            <version>1.15.3</version>-->
-<!--        </dependency>-->
         <dependency>
             <groupId>org.apache.nifi</groupId>
             <artifactId>nifi-standard-processors-extend-version</artifactId>
@@ -44,40 +39,14 @@
         </dependency>
         <dependency>
             <groupId>org.apache.nifi</groupId>
+            <artifactId>nifi-standard-utils</artifactId>
+            <version>1.21.0</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.nifi</groupId>
             <artifactId>nifi-oauth2-provider-api</artifactId>
             <version>1.21.0</version>
         </dependency>
-
-
-<!--        &lt;!&ndash; Libs to get org.apache.nifi.processors.standard.PutEmail working, and not have to import ALL  standard processors&ndash;&gt;-->
-<!--        <dependency>-->
-<!--            <groupId>com.sun.activation</groupId>-->
-<!--            <artifactId>jakarta.activation</artifactId>-->
-<!--            <version>2.0.1</version>-->
-<!--        </dependency>-->
-<!--        <dependency>-->
-<!--            <groupId>com.sun.mail</groupId>-->
-<!--            <artifactId>jakarta.mail</artifactId>-->
-<!--            <version>2.0.1</version>-->
-<!--        </dependency>-->
-<!--        <dependency>-->
-<!--            <groupId>commons-codec</groupId>-->
-<!--            <artifactId>commons-codec</artifactId>-->
-<!--            <version>1.14</version>-->
-<!--        </dependency>-->
-<!-- -->
-<!--        &lt;!&ndash; Libs to get org.apache.nifi.processors.standard.PutSFTP working , and not have to import ALL  standard processors&ndash;&gt;-->
-<!--        <dependency>-->
-<!--            <groupId>commons-net</groupId>-->
-<!--            <artifactId>commons-net</artifactId>-->
-<!--            <version>3.9.0</version>-->
-<!--        </dependency>-->
-<!--        <dependency>-->
-<!--            <groupId>com.exceptionfactory.socketbroker</groupId>-->
-<!--            <artifactId>socketbroker</artifactId>-->
-<!--            <version>1.0.2</version>-->
-<!--        </dependency>-->
-
 
         <!-- JsonToAttributeProcessor -->
         <dependency>
@@ -99,23 +68,11 @@
             </exclusions>
         </dependency>
 
-<!--        &lt;!&ndash; ListSFTPWithInput &ndash;&gt;-->
-<!--        <dependency>-->
-<!--            <groupId>org.apache.nifi</groupId>-->
-<!--            <artifactId>nifi-processor-utils</artifactId>-->
-<!--            <version>1.15.3</version>-->
-<!--        </dependency>-->
-<!--        <dependency>-->
-<!--            <groupId>com.hierynomus</groupId>-->
-<!--            <artifactId>sshj</artifactId>-->
-<!--            <version>0.33.0</version>-->
-<!--        </dependency>-->
-
         <!-- basics -->
         <dependency>
             <groupId>org.apache.nifi</groupId>
             <artifactId>nifi-mock</artifactId>
-            <version>1.15.3</version>
+            <version>1.21.0</version>
             <scope>test</scope>
         </dependency>
         <dependency>
@@ -143,7 +100,7 @@
             <scope>test</scope>
         </dependency>
 
-        <!-- ListSFTPWithInput -->
+        <!-- ListSFTPWithInput / PutSFTPWithErrorMessage-->
         <dependency>
             <groupId>com.github.stefanbirkner</groupId>
             <artifactId>fake-sftp-server-rule</artifactId>
@@ -151,4 +108,17 @@
             <scope>test</scope>
         </dependency>
     </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-enforcer-plugin</artifactId>
+                <version>3.0.0</version>
+                <configuration>
+                    <skip>true</skip>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
 </project>
