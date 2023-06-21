@@ -60,4 +60,17 @@ public class FlatJsonToTextTest {
         assertThat(ffReturn).isNotNull();
         ffReturn.isContentEqual(ff.getContent());
     }
+
+    @Test
+    public void testProcessorNoContentException() {
+        MockFlowFile ff = new MockFlowFile(1);
+        ff.setData("".getBytes(StandardCharsets.UTF_8));
+        testRunner.enqueue(ff);
+        testRunner.run(1);
+        testRunner.assertTransferCount(JsonToAttribute.FAILURE, 1);
+        testRunner.assertAllFlowFilesTransferred(JsonToAttribute.FAILURE);
+        MockFlowFile ffReturn = testRunner.getFlowFilesForRelationship(JsonToAttribute.FAILURE).get(0);
+        assertThat(ffReturn).isNotNull();
+        ffReturn.isContentEqual(ff.getContent());
+    }
 }
