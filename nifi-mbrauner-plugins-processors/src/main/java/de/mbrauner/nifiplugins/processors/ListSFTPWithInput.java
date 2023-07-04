@@ -1,8 +1,10 @@
 package de.mbrauner.nifiplugins.processors;
 
 import net.schmizz.sshj.SSHClient;
+import net.schmizz.sshj.sftp.RemoteDirectory;
 import net.schmizz.sshj.sftp.RemoteResourceInfo;
 import net.schmizz.sshj.sftp.SFTPClient;
+import net.schmizz.sshj.sftp.SFTPException;
 import net.schmizz.sshj.transport.verification.HostKeyVerifier;
 import org.apache.nifi.annotation.behavior.*;
 import org.apache.nifi.annotation.documentation.CapabilityDescription;
@@ -227,6 +229,30 @@ public class ListSFTPWithInput extends AbstractProcessor implements VerifiablePr
                             }
                         }
                     }
+                } catch (SFTPException e) {
+                    /*
+                     * follow lines for debugging behaviour in prod env
+                     *
+                     * START
+                     */
+                    StringBuilder sb = new StringBuilder();
+                    try {
+                        RemoteDirectory rd = sftp.getSFTPEngine().openDir(path);
+                        if (rd != null) {
+                            sb.append("dir exists, other error");
+                        }else{
+                            sb.append("dir was null, that's confusing");
+                        }
+                        rd = null;
+                    } catch (Exception ex) {
+                        sb.append(ex.getMessage());
+                        getLogger().warn(sb.toString(), ex);
+                    }
+                    sb = null;
+                    /*
+                     * END
+                     */
+                    throw e;
                 } finally {
                     sftp.close();
                 }

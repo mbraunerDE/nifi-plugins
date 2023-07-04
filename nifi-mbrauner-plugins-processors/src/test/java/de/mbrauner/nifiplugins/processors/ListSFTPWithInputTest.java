@@ -208,4 +208,24 @@ public class ListSFTPWithInputTest {
                 .containsKey("path")//added by default
         ;
     }
+    @Test
+    public void testProcessorWithInputMissingDirectory() {
+        testRunner.setProperty(ListSFTPWithInput.SFTP_REMOTE_DIR, "/gibtesnicht/");
+
+        MockFlowFile ff = new MockFlowFile(123);
+        ff.putAttributes(Collections.singletonMap("sftp.remote.host", "127.0.0.1"));
+        testRunner.enqueue(ff);
+        testRunner.run(1);
+        testRunner.assertTransferCount(ListSFTPWithInput.FAILURE, 1);
+        testRunner.assertAllFlowFilesTransferred(ListSFTPWithInput.FAILURE);
+        testRunner.assertPenalizeCount(1);
+
+        FlowFile ffReturn = testRunner.getFlowFilesForRelationship(ListSFTPWithInput.FAILURE).get(0);
+        assertThat(ffReturn.getAttributes())
+                .containsEntry("sftp.remote.host", "127.0.0.1")
+                .containsEntry("ExceptionReport", "net.schmizz.sshj.sftp.SFTPException: No such file or directory")
+                .containsKey("filename")//added by default
+                .containsKey("path")//added by default
+        ;
+    }
 }
